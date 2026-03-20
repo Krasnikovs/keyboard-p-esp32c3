@@ -4,8 +4,6 @@
 #include <esp_now.h>
 
 
-// #include <Adafruit_MPU6050.h>
-// #include <Adafruit_Sensor.h>
 // #include <Wire.h>
 // #include <driver/adc.h> 
 
@@ -25,7 +23,7 @@ uint8_t broadcastAddress[] = {0xcc, 0xba, 0x97, 0x12, 0x08, 0x1c}; //
 // #include "MPU.cpp"
 #define Pin_8 8
 #define Pin_10 10
-#define Pin_19 19
+#define Pin_8 8
 
 typedef struct struct_message {
   char a[1];
@@ -55,7 +53,8 @@ void setup() {
 	pinMode(A0, OUTPUT);
 
 	// pinMode(pintrig, OUTPUT);
-	pinMode(A2, INPUT); 
+	pinMode(Pin_10, INPUT); 
+	pinMode(Pin_8, INPUT);
 
 	
 
@@ -64,7 +63,7 @@ void setup() {
 	}
 	Serial.println("Starting.....");
 	WiFi.mode(WIFI_STA);
-	// delay(5000);
+	// // delay(5000);
 	
 	
 	Serial.println("Trying to init esp-now");
@@ -99,17 +98,35 @@ void loop() {
 	// if ((val) < 4095) {
 	// 	Serial.print(val/4);
 	// }
+	testData.a[0] = '\0';
+	testData.b = 1;
+
+	
+
+	// digitalWrite(A0, HIGH);
+
+	// if (digitalRead(Pin_10) == HIGH) {
+	// 	testData.b = 2;
+	// 	testData.a[0] = 'a';
+	// }
+	// if (digitalRead(Pin_8) == LOW) {
+	// 	testData.b = 2;
+	// 	testData.a[0] = 'b';
+	// }
+	// digitalWrite(A0, LOW);
+
 	// analogRead(Pin_10);
 	// Serial.println(" V");
-	if (val%2 == 0) {
-		testData.a[0] = 'b';
+	// if (val%2 == 0) {
+	// 	testData.a[0] = 'b';
 		
-	} else {
-		testData.a[0] = 'a';
-	}
-	val++;
-	testData.b = 1;
-	Serial.printf("Sending %c");
+	// } else {
+	// 	testData.a[0] = 'a';
+	// }
+	// val++;
+	
+	Serial.printf("Sending status: ");
+	Serial.printf("%i ", testData.b);
 	Serial.println(testData.a[0]);
 	esp_err_t result = esp_now_send(0, (uint8_t *) &testData, sizeof(struct_message));
 	
