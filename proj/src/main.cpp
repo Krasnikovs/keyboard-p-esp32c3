@@ -21,9 +21,9 @@ uint8_t broadcastAddress[] = {0xcc, 0xba, 0x97, 0x12, 0x08, 0x1c}; //
 // uint8_t broadcastAddress[] = {0xf0, 0xf5, 0xbd, 0xc9, 0x66, 0x50};
 
 // #include "MPU.cpp"
-#define Pin_8 8
-#define Pin_10 10
-#define Pin_8 8
+#define b_pin 5
+#define a_pin 10
+// #define Pin_8 9
 
 typedef struct struct_message {
   char a[1];
@@ -36,8 +36,15 @@ esp_now_peer_info_t peerInfo;
 
 // callback when data is sent
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
-  Serial.print("\r\nLast Packet Send Status:\t");
+  Serial.print("\rLast Packet Send Status:\t");
+  if (status == ESP_NOW_SEND_SUCCESS) {
+	// Serial.print("\rTest:\t");
+	digitalWrite(8, HIGH);
+  } else {
+	digitalWrite(8, LOW);
+  }
   Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
+//   digitalWrite(8, LOW);
 }
 int val = 0;
 
@@ -49,14 +56,16 @@ void setup() {
 	
 	// pinMode(Power_pin, OUTPUT);
 
-	// pinMode(pinin1, OUTPUT); 
-	pinMode(A0, OUTPUT);
+	pinMode(5, INPUT_PULLDOWN);
+	pinMode(4, INPUT_PULLDOWN); 
+	// pinMode(2,INPUT_PULLDOWN);
 
-	// pinMode(pintrig, OUTPUT);
-	pinMode(Pin_10, INPUT); 
-	pinMode(Pin_8, INPUT);
-
-	
+	pinMode(1, OUTPUT);
+	pinMode(2, OUTPUT);
+	// pinMode(4, OUTPUT); 
+	// pinMode(b_pin, OUTPUT);
+	digitalWrite(8, LOW);
+	pinMode(8, OUTPUT);
 
 	while (!Serial) {
 		delay(10);
@@ -91,29 +100,42 @@ void setup() {
 
 void loop() {
 	// Serial.println("work?.");
-	// analogWrite(A0, 100);
-	// analogWrite(A1, 1);
-	// delay(500);
-	// val = analogRead(A2);
-	// if ((val) < 4095) {
-	// 	Serial.print(val/4);
-	// }
-	testData.a[0] = '\0';
-	testData.b = 1;
+	// analogWrite(4, 50);
+	// analogWrite(5, 1);
+	// // delay(500);
+	// val = analogRead(2);
+	// // if ((val) < 4095) {
+	// 	Serial.println(val);
+	// // }
 
+	testData.a[0] = ' ';
+	testData.b = 0;
+	// digitalWrite(8, LOW);
 	
 
-	// digitalWrite(A0, HIGH);
+	digitalWrite(1, HIGH);
 
-	// if (digitalRead(Pin_10) == HIGH) {
-	// 	testData.b = 2;
-	// 	testData.a[0] = 'a';
-	// }
-	// if (digitalRead(Pin_8) == LOW) {
-	// 	testData.b = 2;
-	// 	testData.a[0] = 'b';
-	// }
-	// digitalWrite(A0, LOW);
+	if (digitalRead(4) == HIGH) {
+		testData.b = 1;
+		testData.a[0] = 'a';
+	}
+	if (digitalRead(5) == HIGH) {
+		testData.b = 1;
+		testData.a[0] = 'b';
+	}
+	digitalWrite(1, LOW);
+
+	digitalWrite(2, HIGH);
+
+	if (digitalRead(4) == HIGH) {
+		testData.b = 1;
+		testData.a[0] = 'c';
+	}
+	if (digitalRead(5) == HIGH) {
+		testData.b = 1;
+		testData.a[0] = 'd';
+	}
+	digitalWrite(2, LOW);
 
 	// analogRead(Pin_10);
 	// Serial.println(" V");
@@ -125,10 +147,10 @@ void loop() {
 	// }
 	// val++;
 	
-	Serial.printf("Sending status: ");
-	Serial.printf("%i ", testData.b);
+	Serial.printf("\nSending status: ");
+	Serial.printf("%i and msg: ", testData.b);
 	Serial.println(testData.a[0]);
 	esp_err_t result = esp_now_send(0, (uint8_t *) &testData, sizeof(struct_message));
 	
-	delay(1000);
+	delay(100);
 }
