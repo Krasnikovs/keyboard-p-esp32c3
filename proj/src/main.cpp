@@ -26,8 +26,9 @@ uint8_t broadcastAddress[] = {0xcc, 0xba, 0x97, 0x12, 0x08, 0x1c}; //
 // #define Pin_8 9
 
 typedef struct struct_message {
-  char a[1];
-  int b;
+  char msg_char[1];
+  int print_msg;
+  char type[1];
 } struct_message;
 
 struct_message testData;
@@ -108,39 +109,43 @@ void loop() {
 	// 	Serial.println(val);
 	// // }
 
-	testData.a[0] = ' ';
-	testData.b = 0;
+	testData.msg_char[0] = ' ';
+	testData.print_msg = 0;
 	// digitalWrite(8, LOW);
 	
 
 	digitalWrite(1, HIGH);
 
 	if (digitalRead(4) == HIGH) {
-		testData.b = 1;
-		testData.a[0] = 'a';
+		testData.print_msg = 1;
+		testData.msg_char[0] = '1';
+		testData.type[0] = 's';
 	}
 	if (digitalRead(5) == HIGH) {
-		testData.b = 1;
-		testData.a[0] = 'b';
+		testData.print_msg = 1;
+		testData.msg_char[0] = '2';
+		testData.type[0] = 's';
 	}
 	digitalWrite(1, LOW);
 
 	digitalWrite(2, HIGH);
 
 	if (digitalRead(4) == HIGH) {
-		testData.b = 1;
-		testData.a[0] = 'c';
+		testData.print_msg = 1;
+		testData.msg_char[0] = 'e';
+		testData.type[0] = 'c';
 	}
 	if (digitalRead(5) == HIGH) {
-		testData.b = 1;
-		testData.a[0] = 'd';
+		testData.print_msg = 1;
+		testData.msg_char[0] = '+';
+		testData.type[0] = 'c';
 	}
 	digitalWrite(2, LOW);
 
 	// analogRead(Pin_10);
 	// Serial.println(" V");
 	// if (val%2 == 0) {
-	// 	testData.a[0] = 'b';
+	// 	testData.a[0] = 'b';1
 		
 	// } else {
 	// 	testData.a[0] = 'a';
@@ -148,8 +153,8 @@ void loop() {
 	// val++;
 	
 	Serial.printf("\nSending status: ");
-	Serial.printf("%i and msg: ", testData.b);
-	Serial.println(testData.a[0]);
+	Serial.printf("%i and msg: ", testData.print_msg);
+	Serial.println(testData.msg_char[0]);
 	esp_err_t result = esp_now_send(0, (uint8_t *) &testData, sizeof(struct_message));
 	
 	delay(100);
